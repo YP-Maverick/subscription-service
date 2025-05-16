@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  cm-db:
+    container_name: cm-db
+    image: postgres:16-alpine
+    ports:
+      - 6540:5432
+    environment:
+      - POSTGRES_DB=card-main
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    volumes:
+      - pgdata:/var/lib/postgresql/cm-data
+
+  cm-app:
+    container_name: cm-app
+    image: card-management:0.0.1-SNAPSHOT
+    build: .
+    ports:
+      - "9090:9090"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://cm-db:5432/card-main
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - cm-db
+
+volumes:
+  pgdata: {}
